@@ -1,6 +1,6 @@
 # Phase Shift Estimator (MATLAB / Octave)
 
-A real-time, sample-by-sample estimator of the phase shift between two periodic signals, using the **correlation method**. It handles DC offsets, unequal amplitudes and noise; with an identical pre-filter on both inputs, it also handles PWM.
+A real-time, sample-by-sample estimator of the phase shift between two periodic signals, using the **correlation method**. It handles any DC offsets, unequal amplitudes and noise; with an identical pre-filter on both inputs, it also handles PWM.
 
 ![Tracking a phase step](results/figures/fig1_tracking.png)
 
