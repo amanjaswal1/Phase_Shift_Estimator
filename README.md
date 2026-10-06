@@ -29,7 +29,7 @@ $$\cos\varphi = \frac{\overline{\tilde{s}_1 \tilde{s}_2}}{\sqrt{\overline{\tilde
 
 **Optional pre-filter (added in v2).** The same 2nd-order low-pass is applied to both inputs. Identical filters shift both signals by the same phase, so the phase difference is unchanged, but switching harmonics are removed before they can bias the correlation.
 
-**Warm/Soft start (added in v2).** For the first $T_\text{filter}$ the weight is $a_k = \max(a, 1/k)$: a plain cumulative mean that then hands over to the EWMA. This removes the inrush/start-up transient caused by seeding the filters with a single sample.
+**Warm start (added in v2).** For the first $T_\text{filter}$ the weight is $a_k = \max(a, 1/k)$: a plain cumulative mean that then hands over to the EWMA. This removes the start-up transient caused by seeding the filters with a single sample.
 
 > Step 2 is similar to how EWMA correlation is estimated in finance (the RiskMetrics approach). $T_\text{filter}$ plays the role of the decay factor, $\lambda = 1 - a$. My `ewma-correlation` repo applies the exact same estimator to stock and bond returns.
 
@@ -58,7 +58,7 @@ $$\cos\varphi = \frac{\overline{\tilde{s}_1 \tilde{s}_2}}{\sqrt{\overline{\tilde
 
 ## Limitations
 
-- **Harmonic-rich inputs need the pre-filter.** In v1 I described the estimator as working with PWM signals. Testing it properly showed that raw two-level PWM biases the magnitude and makes the lead/lag sign sort of unreliable, because the switching harmonics (depending on various factosr) dominate both correlations. Use `prefilter_hz` ≈ 2× the fundamental. For 50 Hz PWM with modulation index 0.4, the worst settled error was 0.20° at 100 Hz, 1.04° at 250 Hz and 9.09° at 500 Hz.
+- **Harmonic-rich inputs need the pre-filter.** In v1 I described the estimator as working with PWM signals. Testing it properly showed that raw two-level PWM biases the magnitude and makes the lead/lag sign unreliable, because the switching harmonics (their size depends on the modulation index and switching frequency) dominate both correlations. Use `prefilter_hz` ≈ 2× the fundamental. For 50 Hz PWM with modulation index 0.4, the worst settled error was 0.20° at 100 Hz, 1.04° at 250 Hz and 9.09° at 500 Hz.
 - **One frequency.** The method assumes both signals share one fundamental. Inputs with several frequencies need band-pass pre-filtering.
 - **Near 0° and ±180°** the arccos is ill-conditioned: small biases in the correlation become larger angle errors. Near ±180° the lead/lag sign also becomes very noise-sensitive.
 - **Fixed sample rate.** The derivative in the sign test uses the nominal `dt`.
@@ -112,7 +112,7 @@ cd tests; run_tests              % 8 tests
 
 ## Context
 
-A personal project. I initially wrote it as a Simulink utility for power-converter simulations to visually see (in a numerical form) the phase between each phase to ensure symmetric values and rewrote it in this cleaner, tested form as part of logging my work. Solo work.
+A personal project. I first wrote it as a Simulink utility to check, as a number, that the three phases of a power-converter simulation were evenly spaced in phase. I rewrote it in this cleaner, tested form as part of logging my work. Solo work.
 
 ## License
 
